@@ -1,0 +1,52 @@
+<div class="auth-container">
+  <h1 class="auth-title">ログイン</h1>
+
+  <div class="auth-form">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="form-group">
+        <%= f.label :email, "メールアドレス", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, "パスワード", class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "form-input" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="form-group">
+          <%= f.check_box :remember_me %>
+          <%= f.label :remember_me, "ログイン状態を保持" %>
+        </div>
+      <% end %>
+
+      <div class="form-actions">
+        <%= f.submit "ログイン", class: "btn btn-primary", style: "width: 100%;" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="demo-accounts">
+    <h3>テストアカウント</h3>
+    <table class="demo-table">
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>メールアドレス</th>
+          <th>パスワード</th>
+          <th>権限</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% User.includes(:employee).each do |user| %>
+          <tr>
+            <td><%= user.employee.name %></td>
+            <td><%= user.email %></td>
+            <td>password123</td>
+            <td><%= user.employee.admin? ? "管理者" : "一般" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

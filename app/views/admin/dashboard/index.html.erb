@@ -1,0 +1,226 @@
+<div class="admin-dashboard">
+  <h1>管理者ダッシュボード</h1>
+
+  <!-- フィルター -->
+  <div class="filters">
+    <%= form_tag admin_dashboard_path, method: :get, class: "filter-form" do %>
+      <div class="filter-group">
+        <label for="department_id">部署:</label>
+        <%= select_tag :department_id,
+            options_from_collection_for_select(@departments, :id, :name, @selected_department_id),
+            include_blank: "全部署",
+            onchange: "this.form.submit()" %>
+      </div>
+      <div class="filter-group">
+        <label for="employee_id">従業員:</label>
+        <%= select_tag :employee_id,
+            options_from_collection_for_select(@employees, :id, :name, @selected_employee_id),
+            include_blank: "全従業員",
+            onchange: "this.form.submit()" %>
+      </div>
+      <div class="filter-actions">
+        <%= link_to "リセット", admin_dashboard_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- サマリー -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-label">総会議数</div>
+      <div class="card-value"><%= @total_meetings %></div>
+      <div class="card-unit">件</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-label">累計会議時間</div>
+      <div class="card-value">
+        <% if @total_hours > 0 %>
+          <%= @total_hours %>時間<%= @total_minutes %>分
+        <% else %>
+          <%= @total_minutes %>分
+        <% end %>
+      </div>
+      <div class="card-unit">（<%= @total_duration_minutes %>分）</div>
+    </div>
+    <div class="summary-card">
+      <div class="card-label">概算コスト</div>
+      <div class="card-value"><%= number_with_delimiter(@total_cost.to_i) %></div>
+      <div class="card-unit">円</div>
+    </div>
+  </div>
+
+  <!-- 部署別集計 -->
+  <div class="stats-section">
+    <h2>部署別集計</h2>
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>部署名</th>
+          <th>会議数</th>
+          <th>累計時間</th>
+          <th>概算コスト</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @department_stats.each do |dept_id, stats| %>
+          <tr>
+            <td><%= stats[:name] %></td>
+            <td><%= stats[:meeting_count] %>件</td>
+            <td><%= stats[:duration_minutes] / 60 %>時間<%= stats[:duration_minutes] % 60 %>分</td>
+            <td><%= number_with_delimiter(stats[:cost].to_i) %>円</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 従業員別集計 -->
+  <div class="stats-section">
+    <h2>従業員別集計</h2>
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>従業員名</th>
+          <th>部署</th>
+          <th>役職</th>
+          <th>時給</th>
+          <th>会議数</th>
+          <th>累計時間</th>
+          <th>概算コスト</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @employee_stats.each do |emp_id, stats| %>
+          <tr>
+            <td><%= stats[:name] %></td>
+            <td><%= stats[:department] || "-" %></td>
+            <td><%= stats[:position] || "-" %></td>
+            <td><%= number_with_delimiter(stats[:hourly_rate].to_i) %>円</td>
+            <td><%= stats[:meeting_count] %>件</td>
+            <td><%= stats[:duration_minutes] / 60 %>時間<%= stats[:duration_minutes] % 60 %>分</td>
+            <td><%= number_with_delimiter(stats[:cost].to_i) %>円</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.admin-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-dashboard h1 {
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+.filters {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+}
+
+.filter-form {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-group label {
+  font-weight: bold;
+}
+
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 150px;
+}
+
+.filter-actions {
+  margin-left: auto;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.summary-card {
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.card-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-unit {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.stats-section {
+  margin-bottom: 40px;
+}
+
+.stats-section h2 {
+  font-size: 18px;
+  border-left: 4px solid #333;
+  padding-left: 10px;
+  margin-bottom: 15px;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.stats-table th,
+.stats-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.stats-table th {
+  background: #333;
+  color: #fff;
+  font-weight: bold;
+}
+
+.stats-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.stats-table tbody tr:hover {
+  background: #f0f0f0;
+}
+</style>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company: one
+  employee: one
+  title: MyString
+  meeting_date: 2025-12-15 23:10:57
+  content: MyText
+
+two:
+  company: two
+  employee: two
+  title: MyString
+  meeting_date: 2025-12-15 23:10:57
+  content: MyText

@@ -1,0 +1,38 @@
+<div class="detail-header">
+  <h1 class="detail-title"><%= @meeting_minute.title %></h1>
+  <div class="detail-meta">
+    <% if @meeting_minute.start_time && @meeting_minute.end_time %>
+      <%= @meeting_minute.start_time.strftime("%Y年%m月%d日 %H:%M") %> 〜 <%= @meeting_minute.end_time.strftime("%H:%M") %>
+      （<%= @meeting_minute.duration_minutes %>分）
+    <% else %>
+      日時未設定
+    <% end %>
+    / 作成者: <%= link_to @meeting_minute.employee.name, employee_path(@meeting_minute.employee) %>
+  </div>
+  <% if @meeting_minute.start_time && @meeting_minute.end_time %>
+    <div class="detail-cost">
+      概算コスト: <strong><%= number_with_delimiter(@meeting_minute.estimated_cost.to_i) %>円</strong>
+    </div>
+  <% end %>
+</div>
+
+<% if @meeting_minute.shared_employees.any? %>
+  <div class="shared-info">
+    <span class="shared-label">共有先:</span>
+    <% @meeting_minute.shared_employees.each do |employee| %>
+      <span class="shared-employee"><%= employee.name %></span>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="detail-content">
+<%= @meeting_minute.content %>
+</div>
+
+<div class="detail-actions">
+  <% if @meeting_minute.employee_id == current_employee.id %>
+    <%= link_to "編集", edit_meeting_minute_path(@meeting_minute), class: "btn" %>
+    <%= button_to "削除", meeting_minute_path(@meeting_minute), method: :delete, class: "btn btn-danger", data: { turbo_confirm: "本当に削除しますか？" } %>
+  <% end %>
+  <%= link_to "一覧に戻る", meeting_minutes_path, class: "btn" %>
+</div>

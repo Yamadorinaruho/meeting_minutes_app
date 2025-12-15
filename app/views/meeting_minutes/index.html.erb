@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h1 class="page-title">議事録一覧</h1>
+  <%= link_to "新規作成", new_meeting_minute_path, class: "btn btn-primary" %>
+</div>
+
+<% if @meeting_minutes.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>タイトル</th>
+        <th>開催日時</th>
+        <th>作成者</th>
+        <th>種別</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @meeting_minutes.each do |minute| %>
+        <tr>
+          <td><%= link_to minute.title, meeting_minute_path(minute) %></td>
+          <td><%= minute.meeting_date&.strftime("%Y/%m/%d %H:%M") || "日時未設定" %></td>
+          <td><%= minute.employee.name %></td>
+          <td>
+            <% if minute.employee_id == current_employee.id %>
+              <span class="badge badge-active">自分</span>
+            <% else %>
+              <span class="badge badge-shared">共有</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "詳細", meeting_minute_path(minute), class: "btn" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="empty-state">
+    議事録がありません
+  </div>
+<% end %>

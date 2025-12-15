@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1 class="page-title">役職管理</h1>
+  <%= link_to "新規作成", new_admin_position_path, class: "btn btn-primary" %>
+</div>
+
+<% if @positions.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>順位</th>
+        <th>役職名</th>
+        <th>時給</th>
+        <th>所属人数</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @positions.each do |position| %>
+        <tr>
+          <td><%= position.rank %></td>
+          <td><%= position.name %></td>
+          <td><%= number_with_delimiter(position.hourly_rate.to_i) %>円</td>
+          <td><%= position.employees.count %>人</td>
+          <td>
+            <%= link_to "編集", edit_admin_position_path(position), class: "btn" %>
+            <%= button_to "削除", admin_position_path(position), method: :delete, class: "btn btn-danger", data: { turbo_confirm: "本当に削除しますか？" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="empty-state">
+    役職が登録されていません
+  </div>
+<% end %>

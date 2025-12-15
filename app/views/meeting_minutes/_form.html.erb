@@ -1,0 +1,62 @@
+<%= form_with model: @meeting_minute do |f| %>
+  <% if @meeting_minute.errors.any? %>
+    <div class="error-messages">
+      <h3><%= @meeting_minute.errors.count %>件のエラーがあります</h3>
+      <ul>
+        <% @meeting_minute.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :title, "タイトル", class: "form-label" %>
+    <%= f.text_field :title, class: "form-input" %>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <%= f.label :start_time, "開始時刻", class: "form-label" %>
+      <%= f.datetime_local_field :start_time, class: "form-input" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :end_time, "終了時刻", class: "form-label" %>
+      <%= f.datetime_local_field :end_time, class: "form-input" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :content, "議事内容", class: "form-label" %>
+    <%= f.text_area :content, class: "form-textarea" %>
+  </div>
+
+  <div class="form-group" data-controller="employee-search">
+    <label class="form-label">共有先</label>
+    <div class="search-box">
+      <input type="text"
+             class="form-input"
+             placeholder="名前または部署で検索..."
+             data-employee-search-target="input"
+             data-action="input->employee-search#filter">
+      <button type="button" class="search-clear" data-action="click->employee-search#clear">クリア</button>
+    </div>
+    <div class="checkbox-group" data-employee-search-target="list">
+      <% @employees.each do |employee| %>
+        <div class="checkbox-item"
+             data-employee-search-target="item"
+             data-name="<%= employee.name %>"
+             data-department="<%= employee.department&.name || '' %>">
+          <%= check_box_tag "meeting_minute[shared_employee_ids][]", employee.id, @meeting_minute.shared_employees.include?(employee), id: "shared_employee_#{employee.id}" %>
+          <%= label_tag "shared_employee_#{employee.id}", employee.name %>
+          <span class="checkbox-meta">(<%= employee.department&.name || "部署なし" %>)</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit "保存", class: "btn btn-primary" %>
+    <%= link_to "キャンセル", meeting_minutes_path, class: "btn" %>
+  </div>
+<% end %>

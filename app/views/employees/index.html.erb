@@ -1,0 +1,49 @@
+<div class="page-header">
+  <h1 class="page-title">従業員一覧</h1>
+  <% if admin? %>
+    <%= link_to "新規作成", new_employee_path, class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<% if @employees.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>社員番号</th>
+        <th>氏名</th>
+        <th>部署</th>
+        <th>権限</th>
+        <th>ステータス</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @employees.each do |employee| %>
+        <tr>
+          <td><%= employee.employee_number %></td>
+          <td><%= link_to employee.name, employee_path(employee) %></td>
+          <td><%= employee.department&.name || "-" %></td>
+          <td>
+            <% if employee.admin? %>
+              <span class="badge badge-active">管理者</span>
+            <% end %>
+          </td>
+          <td>
+            <% if employee.active? %>
+              <span class="badge badge-active">在籍</span>
+            <% else %>
+              <span class="badge badge-retired">退職</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "詳細", employee_path(employee), class: "btn" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="empty-state">
+    従業員がいません
+  </div>
+<% end %>

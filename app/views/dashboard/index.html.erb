@@ -1,0 +1,35 @@
+<div class="page-header">
+  <h1 class="page-title">ダッシュボード</h1>
+</div>
+
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-label">在籍従業員数</div>
+    <div class="stat-value"><%= @employees_count %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">アクセス可能な議事録</div>
+    <div class="stat-value"><%= @my_meeting_minutes_count %></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">最近の議事録</h2>
+
+  <% if @recent_meeting_minutes.any? %>
+    <% @recent_meeting_minutes.each do |minute| %>
+      <div class="card">
+        <div class="card-title">
+          <%= link_to minute.title, meeting_minute_path(minute) %>
+        </div>
+        <div class="card-meta">
+          <%= minute.meeting_date&.strftime("%Y年%m月%d日 %H:%M") || "日時未設定" %> / 作成者: <%= minute.employee.name %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      議事録がありません
+    </div>
+  <% end %>
+</div>
