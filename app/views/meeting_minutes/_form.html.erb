@@ -27,6 +27,15 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :audio, "音声ファイル", class: "form-label" %>
+    <%= f.file_field :audio, accept: "audio/*", class: "form-input" %>
+    <p class="form-hint">MP3、WAV、M4A、WebM形式（100MB以下）</p>
+    <% if @meeting_minute.audio.attached? %>
+      <p class="form-hint">現在のファイル: <%= @meeting_minute.audio.filename %></p>
+    <% end %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :content, "議事内容", class: "form-label" %>
     <%= f.text_area :content, class: "form-textarea" %>
   </div>

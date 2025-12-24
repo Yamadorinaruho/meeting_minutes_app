@@ -25,8 +25,43 @@
   </div>
 <% end %>
 
-<div class="detail-content">
-<%= @meeting_minute.content %>
+<% if @meeting_minute.audio.attached? %>
+  <div class="detail-section">
+    <h2 class="section-title">音声</h2>
+    <audio controls class="audio-player">
+      <source src="<%= rails_blob_path(@meeting_minute.audio, disposition: 'inline') %>" type="<%= @meeting_minute.audio.content_type %>">
+      お使いのブラウザは音声再生に対応していません。
+    </audio>
+    <p class="audio-info"><%= @meeting_minute.audio.filename %> (<%= number_to_human_size(@meeting_minute.audio.byte_size) %>)</p>
+  </div>
+<% end %>
+
+<% if @meeting_minute.transcription.present? %>
+  <div class="detail-section">
+    <h2 class="section-title">文字起こし（AI生成）</h2>
+    <div class="transcription-content">
+      <%= simple_format(@meeting_minute.transcription) %>
+    </div>
+  </div>
+<% elsif @meeting_minute.audio.attached? %>
+  <div class="detail-section">
+    <h2 class="section-title">文字起こし</h2>
+    <% case @meeting_minute.transcription_status %>
+    <% when "pending" %>
+      <p class="transcription-status">文字起こし待機中...</p>
+    <% when "processing" %>
+      <p class="transcription-status">文字起こし処理中...</p>
+    <% when "failed" %>
+      <p class="transcription-status error">文字起こしに失敗しました</p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="detail-section">
+  <h2 class="section-title">議事内容</h2>
+  <div class="detail-content">
+    <%= simple_format(@meeting_minute.content) %>
+  </div>
 </div>
 
 <div class="detail-actions">

@@ -548,3 +548,52 @@ a:hover {
   color: #666;
   margin-top: 4px;
 }
+
+/* Detail Section */
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-section .section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Audio Player */
+.audio-player {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.audio-info {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Transcription */
+.transcription-content {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.8;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.transcription-status {
+  font-size: 14px;
+  color: #666;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+}
+
+.transcription-status.error {
+  color: #c00;
+  background-color: #fff5f5;
+  border-color: #fcc;
+}

@@ -1,3 +1,6 @@
+
+
+
 class MeetingMinutesController < ApplicationController
   before_action :set_meeting_minute, only: [:show, :edit, :update, :destroy]
   before_action :authorize_access!, only: [:show]
@@ -30,6 +33,7 @@ class MeetingMinutesController < ApplicationController
 
     if @meeting_minute.save
       update_shares
+      enqueue_transcription if @meeting_minute.audio.attached?
       redirect_to @meeting_minute, notice: "議事録を作成しました"
     else
       @employees = current_company.employees.active.where.not(id: current_employee.id)
@@ -42,8 +46,11 @@ class MeetingMinutesController < ApplicationController
   end
 
   def update
+    audio_changed = params[:meeting_minute][:audio].present?
+
     if @meeting_minute.update(meeting_minute_params)
       update_shares
+      enqueue_transcription if audio_changed
       redirect_to @meeting_minute, notice: "議事録を更新しました"
     else
       @employees = current_company.employees.active.where.not(id: @meeting_minute.employee_id)
@@ -75,7 +82,7 @@ class MeetingMinutesController < ApplicationController
   end
 
   def meeting_minute_params
-    params.require(:meeting_minute).permit(:title, :start_time, :end_time, :content)
+    params.require(:meeting_minute).permit(:title, :start_time, :end_time, :content, :audio)
   end
 
   def update_shares
@@ -85,5 +92,10 @@ class MeetingMinutesController < ApplicationController
     shared_employee_ids.each do |employee_id|
       @meeting_minute.meeting_minute_shares.create(employee_id: employee_id)
     end
+  end
+
+  def enqueue_transcription
+    @meeting_minute.update!(transcription: nil, transcription_status: :pending)
+    TranscriptionJob.perform_later(@meeting_minute.id)
   end
 end
